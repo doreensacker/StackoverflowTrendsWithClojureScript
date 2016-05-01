@@ -3,7 +3,7 @@
 (require 'cljs.repl.browser)
 
 (cljs.build.api/build "src"
-  {:main 'hello-world.core
+  {:main 'coursework1.core
    :output-to "out/main.js"
    :verbose true})
 
