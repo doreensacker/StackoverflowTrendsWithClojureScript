@@ -4,13 +4,10 @@
             [cljs.core.async :refer [<!]]
             [reagent.core :as reagent]
             [cljs-pikaday.reagent :as pikaday]
-            [cljs-time.internal.core :as internal :refer [leap-year? format]]
-            [goog.date.Date]
-            [goog.date.DateTime]
-            [goog.date.UtcDateTime]
-            [goog.i18n.TimeZone])
+  )
   (:require-macros [cljs.core.async.macros :refer [go]]
                    [reagent.ratom :refer [reaction]]))
+
 
 (defonce conn
   (repl/connect "http://localhost:9000/repl"))
@@ -21,13 +18,19 @@
 (defonce end (reagent/atom yesterday))
 (def today (js/Date.))
 
-(defn todayToUnix []
-  (js/Date.(.getTime today))
-)
+
+(defn date? [x]
+  (= (type x) js/Date))
+
+(defn dateInUnix [whichOne]
+  (let [dateInput @(whichOne {:start start :end end})]
+    (if (date? dateInput)
+      (str (.getTime dateInput))
+        "unselected")))
 
 
 (enable-console-print!)
-(println today)
+;;(println "TodayInUnix" (dateInUnix today))
 
 
 (defn total [url]
@@ -68,14 +71,17 @@
     [:div
       [:label {:for "end"} "End date: "]
       [pikaday/date-selector
-       {:date-atom end
+        {:date-atom end
          :min-date-atom start
          :pikaday-attrs {:max-date today}
          :input-attrs {:id "end"}
         }]
     ]
     [:div
-     [:p "UnixTimeStamp "  ]]
+     [:p "Selected startdate in UnixTime " (dateInUnix :start)]
+     [:p "Selected enddate in UnixTime " (dateInUnix :end) ]
+
+    ]
   ]
 )
 
@@ -83,7 +89,6 @@
   (reagent/render [simple-component](.getElementById js/document "call"))
   (reagent/render [home-page](.getElementById js/document "app"))
 )
-
 
 
 

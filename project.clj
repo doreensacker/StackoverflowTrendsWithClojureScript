@@ -13,9 +13,7 @@
                  ;;[cljsjs/react "15.0.1-1"]
                  [reagent "0.6.0-alpha"]
                  ;;[figwheel "0.5.2"]
-                 [com.andrewmcveigh/cljs-time "0.4.0"]
-
-                  ]
+                ]
 
   :main 'coursework1.core
   :output-to "out/main.js"
