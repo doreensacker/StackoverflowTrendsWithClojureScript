@@ -4,20 +4,27 @@
             [cljs.core.async :refer [<!]]
             [reagent.core :as reagent]
             [cljs-pikaday.reagent :as pikaday]
+            [clojure.string :as string]
   )
   (:require-macros [cljs.core.async.macros :refer [go]]
                    [reagent.ratom :refer [reaction]]))
 
-
 (defonce conn
   (repl/connect "http://localhost:9000/repl"))
+
+;;-----------------------
+;;var
 
 (defonce numberOfTotal (reagent/atom 1))
 
 (defonce start (reagent/atom last-week-yesterday))
 (defonce end (reagent/atom yesterday))
 (def today (js/Date.))
+(def months (reagent/atom 0))
 
+
+;;-----------------------
+;;date func
 
 (defn date? [x]
   (= (type x) js/Date))
@@ -25,35 +32,87 @@
 (defn dateInUnix [whichOne]
   (let [dateInput @(whichOne {:start start :end end})]
     (if (date? dateInput)
-      (str (.getTime dateInput))
+      (str (/ (.getTime dateInput) 1000))
         "unselected")))
 
+;;add 30 days in seconds 2592000
+(defn addMonth [d]
+  (+ d 2592000)
+ )
+
+
+(defn monthsBetweenDates [dates firstDate ende]
+  (if (nil? dates)
+     (monthsBetweenDates (vector firstDate) firstDate ende)
+     (let [nextDate (+ (peek dates) 2592000)]
+       (if (>= nextDate ende)
+             (conj dates ende)
+             (monthsBetweenDates (conj dates nextDate) firstDate ende)
+       )
+     )
+  )
+)
+
+(defn startMonths []
+  (let [startwert (dateInUnix :start)]
+              (monthsBetweenDates nil startwert 1462140000 )))
 
 (enable-console-print!)
-;;(println "TodayInUnix" (dateInUnix today))
+(println (monthsBetweenDates nil 1459461600 1462140000))
+
+(defn daysBetweenDates [x y]
+  (when (every? date? [x y])
+    (let [ms-per-day (* 1000 60 60 25)
+          x-ms (.getTime x)
+          y-ms (.getTime y)]
+      (.round js/Math (.abs js/Math (/ (- x-ms y-ms) ms-per-day))))))
+
+(def totalDaysSelected (reaction (daysBetweenDates @start @end)))
+
+;;-----------------------
+;;http
 
 
 (defn total [url]
    (go (let [response (<! (http/get url {:with-credentials? false}))]
      (:total (:body response)))))
 
+(defn total' [from to tag]
+  (let [url (string/join ["https://api.stackexchange.com/2.2/"
+                                                 "answers?"
+                                                 "fromdate=" from
+                                                 "&todate=" to
+                                                 "&tagged=" tag
+                                                 "&site=stackoverflow&filter=!bRyCgbjcxkJlK8"
+        ])]
+    (go (let [response (<! (http/get url {:with-credentials? false}))]
+       (:total (:body response))))))
+
+
 (enable-console-print!)
      (go
        (println (<! (total "https://api.stackexchange.com/2.2/answers?fromdate=1456790400&todate=1459382400&tagged=clojure&site=stackoverflow&filter=!bRyCgbjcxkJlK8"
                       ))))
-;;(go
-  ;;defn multi [(listOfUrl)]
-    ;  map (println(<!(total listOfUrl))))
+
+(go
+  (reset! numberOfTotal (<! (total (string/join ["https://api.stackexchange.com/2.2/"
+                                                 "answers?"
+                                                 "fromdate=" "1456790400"
+                                                 "&todate=" "1459382400"
+                                                 "&tagged=" "clojure"
+                                                 "&site=stackoverflow&filter=!bRyCgbjcxkJlK8"
+        ])))))
+
+
+;;-----------------------
+;;views
 
 
 (defn simple-component []
   [:div
-   [:p "Number of total " @numberOfTotal]
+   [:p "Number of total " @numberOfTotal ]
   ])
 
-(go
-  (reset! numberOfTotal (<! (total "https://api.stackexchange.com/2.2/answers?fromdate=1456790400&todate=1459382400&tagged=clojure&site=stackoverflow&filter=!bRyCgbjcxkJlK8"
-                      ))))
 
 
 (defn home-page []
@@ -80,13 +139,18 @@
     [:div
      [:p "Selected startdate in UnixTime " (dateInUnix :start)]
      [:p "Selected enddate in UnixTime " (dateInUnix :end) ]
-
+     [:p "Days selected: " @totalDaysSelected]
+     [:p "Months between Dates " @months]
+     [:p [:button {:on-click #(swap! months startMonths)} "Press!"]]
     ]
   ]
 )
 
+;;-----------------------
+;;run
+
 (defn run []
-  (reagent/render [simple-component](.getElementById js/document "call"))
+  (reagent/render [simple-component](.getElementById js/document "total"))
   (reagent/render [home-page](.getElementById js/document "app"))
 )
 
