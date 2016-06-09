@@ -16,7 +16,6 @@
 ;;var
 
 (defonce numberOfTotal (reagent/atom 1))
-
 (defonce start (reagent/atom last-week-yesterday))
 (defonce end (reagent/atom yesterday))
 (def today (js/Date.))
@@ -32,7 +31,7 @@
 (defn dateInUnix [whichOne]
   (let [dateInput @(whichOne {:start start :end end})]
     (if (date? dateInput)
-      (str (/ (.getTime dateInput) 1000))
+      (/ (.getTime dateInput) 1000)
         "unselected")))
 
 ;;add 30 days in seconds 2592000
@@ -54,8 +53,40 @@
 )
 
 (defn startMonths []
-  (let [startwert (dateInUnix :start)]
-              (monthsBetweenDates nil startwert 1462140000 )))
+  (let [startwert (dateInUnix :start)
+        endwert (dateInUnix :end)
+        months (monthsBetweenDates nil startwert endwert)]
+        (manyCalls months)
+        (str months)
+  )
+)
+
+
+(defn manyCalls [dates]
+  (let [tmpFirst (first dates)]
+        results (vector)
+    (go
+      (loop [counter 0 firstElem tmpFirst nextDates (rest dates)]
+        (let [secondElem (first nextDates)
+              newRest (rest nextDates)
+              result (<! (total' firstElem secondElem "jquery"))]
+          (js/console.log (string/join ["Runde " counter ": " result]))
+          (conj results result)
+          (if (empty? newRest)
+            ()
+            (recur (inc counter) secondElem newRest)
+          )
+        )
+      )
+    )
+    (js/console.log (str results))
+  )
+)
+
+
+
+
+
 
 (enable-console-print!)
 (println (monthsBetweenDates nil 1459461600 1462140000))
