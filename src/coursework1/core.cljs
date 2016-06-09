@@ -83,14 +83,6 @@
   )
 )
 
-
-
-
-
-
-(enable-console-print!)
-(println (monthsBetweenDates nil 1459461600 1462140000))
-
 (defn daysBetweenDates [x y]
   (when (every? date? [x y])
     (let [ms-per-day (* 1000 60 60 25)
@@ -115,6 +107,7 @@
                                                  "&todate=" to
                                                  "&tagged=" tag
                                                  "&site=stackoverflow&filter=!bRyCgbjcxkJlK8"
+                                                 "&key=sFL00JQUoK8d5n9GtHiGzg(("
         ])]
     (go (let [response (<! (http/get url {:with-credentials? false}))]
        (:total (:body response))))))
@@ -158,6 +151,7 @@
         }
        ]
     ]
+    [:p ""]
     [:div
       [:label {:for "end"} "End date: "]
       [pikaday/date-selector
@@ -184,12 +178,3 @@
   (reagent/render [simple-component](.getElementById js/document "total"))
   (reagent/render [home-page](.getElementById js/document "app"))
 )
-
-
-
-
-
-
-
-
-
