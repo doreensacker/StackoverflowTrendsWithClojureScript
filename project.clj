@@ -12,6 +12,7 @@
                  ;;[cljsjs/pikaday "1.4.0-1"]
                  ;;[cljsjs/react "15.0.1-1"]
                  [reagent "0.6.0-alpha"]
+                 [cljsjs/chartist "0.9.4-4"]
                  ;;[figwheel "0.5.2"]
                 ]
 

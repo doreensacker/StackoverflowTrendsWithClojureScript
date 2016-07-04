@@ -7,6 +7,7 @@
             [clojure.string :as string]
             [coursework1.network :as network]
             [coursework1.date :as date]
+            [cljsjs.chartist]
 
   )
   (:require-macros [cljs.core.async.macros :refer [go]]
@@ -62,11 +63,15 @@
      [:p "Days selected: " @totalDaysSelected]
      [:p "Total Values for months " @months]
      [:p [:button {:on-click #(date/getTotalMonthValues @start @end)} "Press!"]]
-     ;;[:p [:button {:on-click #(swap! months (str(date/getTotalMonthValues @start @end)))} "Press!"]]
-
     ]
   ]
 )
+
+
+;;-----------------------
+;;Charts
+
+
 
 ;;-----------------------
 ;;run
@@ -74,4 +79,5 @@
 (defn run []
   (reagent/render [simple-component](.getElementById js/document "total"))
   (reagent/render [home-page](.getElementById js/document "app"))
+
 )

@@ -6,6 +6,8 @@
             [cljs-pikaday.reagent :as pikaday]
             [clojure.string :as string]
             [coursework1.network :as network]
+            [clojure.string :as string]
+
   )
   (:require-macros [cljs.core.async.macros :refer [go]]
                    [reagent.ratom :refer [reaction]]))
@@ -19,6 +21,8 @@
 ;; (defn addMonth [d]
 ;;   (+ d 2592000)
 ;;  )
+
+
 
 (defn dateInUnix [dateInput]
     (if (date? dateInput)
@@ -42,7 +46,8 @@
   (let [startwert (dateInUnix start)
         endwert (dateInUnix end)
         months (monthsBetweenDates nil startwert endwert)]
-        (network/makeManyCalls months network/callback)
+        (js/console.log (string/join ["Dates" months]))
+        (network/makeManyCalls months)
   )
 )
 

@@ -3,10 +3,12 @@
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
             [clojure.string :as string]
+            [reagent.core :as reagent]
+
   )
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defn makeManyCalls [dates nextFunc]
+(defn makeManyCalls [dates]
   (let [tmpFirst (first dates)]
     (go
       (loop [counter 0 firstElem tmpFirst nextDates (rest dates) allResults (vector)]
@@ -16,7 +18,7 @@
           (js/console.log (string/join ["Runde " counter ": " result]))
           (let [listOfResults (conj allResults result)]
           (if (empty? newRest)
-            (nextFunc listOfResults)
+            (renderChart listOfResults dates)
             (recur (inc counter) secondElem newRest listOfResults)
             )
           )
@@ -45,6 +47,40 @@
                                                  "&key=sFL00JQUoK8d5n9GtHiGzg(("
                           ])]
     (getFromUrl url)))
+
+
+;;----------
+;;chart
+
+(defn dateFromUnix [unix-time]
+  (let [date (js/Date. (* unix-time 1000))
+        day (.getDate date)
+        month (+ 1 (.getMonth date))
+        year (.getFullYear date)
+        ]
+    (string/join (vector day "/" month "/" year))
+    )
+  )
+
+(defn firstChart[results monthsForResults]
+  (js/console.log (string/join [ "DATES" (array (mapv dateFromUnix monthsForResults))]))
+  (let [chart-data {:labels (mapv dateFromUnix monthsForResults)
+                    :series  results}
+        options {:width  "700px"
+                 :height "380px"}]
+    (js/Chartist.Line. ".ct-chart" (clj->js chart-data) (clj->js options))))
+
+
+(defn showChart [resultValues monthValues]
+  (let [some "state goes here"]
+    (reagent/create-class
+      {:component-did-mount #(firstChart resultValues monthValues )
+       :display-name        "chart-component"
+       :reagent-render      (fn []
+                              [:div {:class "ct-chart ct-perfect-fourth"}])})))
+
+(defn renderChart [ress mon]
+  (reagent/render [showChart ress mon](.getElementById js/document "myChart")))
 
 ;;-------
 ;;Test
