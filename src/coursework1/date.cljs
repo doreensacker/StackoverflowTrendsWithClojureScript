@@ -46,7 +46,6 @@
   (let [startwert (dateInUnix start)
         endwert (dateInUnix end)
         months (monthsBetweenDates nil startwert endwert)]
-        (js/console.log (string/join ["Dates" months]))
         (network/makeManyCalls months)
   )
 )

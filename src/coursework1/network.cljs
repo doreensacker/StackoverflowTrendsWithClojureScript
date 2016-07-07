@@ -15,7 +15,6 @@
         (let [secondElem (first nextDates)
               newRest (rest nextDates)
               result (<! (sendRequest firstElem secondElem "jquery"))]
-          (js/console.log (string/join ["Runde " counter ": " result]))
           (let [listOfResults (conj allResults result)]
           (if (empty? newRest)
             (renderChart listOfResults dates)
@@ -63,9 +62,8 @@
   )
 
 (defn firstChart[results monthsForResults]
-  (js/console.log (string/join [ "DATES" (array (mapv dateFromUnix monthsForResults))]))
   (let [chart-data {:labels (mapv dateFromUnix monthsForResults)
-                    :series  results}
+                    :series  [results]}
         options {:width  "700px"
                  :height "380px"}]
     (js/Chartist.Line. ".ct-chart" (clj->js chart-data) (clj->js options))))
