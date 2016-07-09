@@ -42,11 +42,11 @@
   )
 )
 
-(defn getTotalMonthValues [start end]
+(defn getTotalMonthValues [kind start end tag]
   (let [startwert (dateInUnix start)
         endwert (dateInUnix end)
         months (monthsBetweenDates nil startwert endwert)]
-        (network/makeManyCalls months)
+        (network/makeManyCalls kind months tag)
   )
 )
 

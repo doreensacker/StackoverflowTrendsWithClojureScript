@@ -8,17 +8,17 @@
   )
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defn makeManyCalls [dates]
+(defn makeManyCalls [kind dates tag]
   (let [tmpFirst (first dates)]
     (go
-      (loop [counter 0 firstElem tmpFirst nextDates (rest dates) allResults (vector)]
+      (loop [firstElem tmpFirst nextDates (rest dates) allResults (vector)]
         (let [secondElem (first nextDates)
               newRest (rest nextDates)
-              result (<! (sendRequest firstElem secondElem "jquery"))]
+              result (<! (sendRequest kind firstElem secondElem tag))]
           (let [listOfResults (conj allResults result)]
           (if (empty? newRest)
             (renderChart listOfResults dates)
-            (recur (inc counter) secondElem newRest listOfResults)
+            (recur secondElem newRest listOfResults)
             )
           )
         )
@@ -36,9 +36,9 @@
    (go (let [response (<! (http/get url {:with-credentials? false}))]
      (:total (:body response)))))
 
-(defn sendRequest [from to tag]
+(defn sendRequest [kind from to tag]
   (let [url (string/join ["https://api.stackexchange.com/2.2/"
-                                                 "answers?"
+                                                 kind "?"
                                                  "fromdate=" from
                                                  "&todate=" to
                                                  "&tagged=" tag

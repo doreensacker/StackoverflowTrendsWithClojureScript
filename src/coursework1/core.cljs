@@ -19,19 +19,18 @@
 ;;-----------------------
 ;;var
 
-(defonce numberOfTotal (reagent/atom 1))
-(defonce start (reagent/atom last-week-yesterday))
-(defonce end (reagent/atom yesterday))
+(defonce start (reagent/atom today))
+(defonce end (reagent/atom today))
+(defonce tag (reagent/atom ""))
 (def today (js/Date.))
 (def months (reagent/atom 0))
 (def totalDaysSelected (reaction (date/daysBetweenDates @start @end)))
 
 
-
-(defn simple-component []
-  [:div
-   [:p "Number of total " @numberOfTotal ]
-  ])
+(defn inputField [value]
+  [:input {:type "text"
+           :value @value
+           :on-change #(reset! value (-> % .-target .-value))}])
 
 
 
@@ -58,12 +57,18 @@
         }]
     ]
     [:div
-     [:p "Selected startdate in UnixTime " (date/dateInUnix @start)]
-     [:p "Selected enddate in UnixTime " (date/dateInUnix @end) ]
-     [:p "Days selected: " @totalDaysSelected]
-     [:p "Total Values for months " @months]
-     [:p [:button {:on-click #(date/getTotalMonthValues @start @end)} "Press!"]]
+       [:p "Enter TAG : " [inputField tag]]
     ]
+    [:div
+     [:p [:button {:on-click #((if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
+                                (date/getTotalMonthValues "questions" @start @end @tag)))} "Get Questions!"]
+         [:button {:on-click #((if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
+                                (date/getTotalMonthValues "answers" @start @end @tag)))} "Get Answers!"]
+         [:button {:on-click #((if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
+                                (date/getTotalMonthValues "posts" @start @end @tag)))} "Get Posts!"]
+      ]
+    ]
+
   ]
 )
 
@@ -77,7 +82,6 @@
 ;;run
 
 (defn run []
-  (reagent/render [simple-component](.getElementById js/document "total"))
   (reagent/render [home-page](.getElementById js/document "app"))
 
 )
