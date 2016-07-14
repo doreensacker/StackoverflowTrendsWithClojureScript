@@ -22,6 +22,10 @@
 (defonce start (reagent/atom today))
 (defonce end (reagent/atom today))
 (defonce tag (reagent/atom ""))
+(defonce posts (reagent/atom "posts"))
+(defonce answers (reagent/atom "answers"))
+(defonce questions (reagent/atom "questions"))
+
 (def today (js/Date.))
 (def months (reagent/atom 0))
 (def totalDaysSelected (reaction (date/daysBetweenDates @start @end)))
@@ -60,12 +64,12 @@
        [:p "Enter TAG : " [inputField tag]]
     ]
     [:div
-     [:p [:button {:on-click #((if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues "questions" @start @end @tag)))} "Get Questions!"]
-         [:button {:on-click #((if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues "answers" @start @end @tag)))} "Get Answers!"]
-         [:button {:on-click #((if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues "posts" @start @end @tag)))} "Get Posts!"]
+     [:p [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
+                                (date/getTotalMonthValues @questions @start @end @tag))} "Get Questions!"]
+         [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
+                                (date/getTotalMonthValues @answers @start @end @tag))} "Get Answers!"]
+         [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
+                                (date/getTotalMonthValues @posts @start @end @tag))} "Get Posts!"]
       ]
     ]
 

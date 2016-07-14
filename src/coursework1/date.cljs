@@ -6,7 +6,6 @@
             [cljs-pikaday.reagent :as pikaday]
             [clojure.string :as string]
             [coursework1.network :as network]
-            [clojure.string :as string]
 
   )
   (:require-macros [cljs.core.async.macros :refer [go]]
