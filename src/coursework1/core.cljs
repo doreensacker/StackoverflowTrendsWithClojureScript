@@ -22,7 +22,7 @@
 
 ;;-----------------------
 ;;var
-
+(def today (js/Date.))
 (defonce start (reagent/atom today))
 (defonce end (reagent/atom today))
 (defonce tag (reagent/atom ""))
@@ -30,7 +30,7 @@
 (defonce answers (reagent/atom "answers"))
 (defonce questions (reagent/atom "questions"))
 
-(def today (js/Date.))
+
 (def months (reagent/atom 0))
 (def totalDaysSelected (reaction (date/daysBetweenDates @start @end)))
 

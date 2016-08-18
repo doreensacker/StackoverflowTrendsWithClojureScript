@@ -9,48 +9,9 @@
   )
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
-(defn makeManyCalls [kind dates tag]
-  (let [tmpFirst (first dates)]
-    (go
-      (loop [firstElem tmpFirst nextDates (rest dates) allResults (vector)]
-        (let [secondElem (first nextDates)
-              newRest (rest nextDates)
-              result (<! (sendRequest kind firstElem secondElem tag))]
-          (let [listOfResults (conj allResults result)]
-          (if (empty? newRest)
-            (renderChart listOfResults dates)
-            (recur secondElem newRest listOfResults)
-            )
-          )
-        )
-      )
-    )
-  )
-)
+(def resultsAtom (reagent/atom []))
+(def datesAtom (reagent/atom []))
 
-;; (defn callback[results]
-;;    (js/console.log (string/join ["Results" results]))
-
-;;   )
-
-(defn getFromUrl [url]
-   (go (let [response (<! (http/get url {:with-credentials? false}))]
-     (:total (:body response)))))
-
-(defn sendRequest [kind from to tag]
-  (let [url (string/join ["https://api.stackexchange.com/2.2/"
-                                                 kind "?"
-                                                 "fromdate=" from
-                                                 "&todate=" to
-                                                 "&tagged=" tag
-                                                 "&site=stackoverflow&filter=!bRyCgbjcxkJlK8"
-                                                 "&key=sFL00JQUoK8d5n9GtHiGzg(("
-                          ])]
-    (getFromUrl url)))
-
-
-;;----------
-;;chart
 
 (defn dateFromUnix [unix-time]
   (let [date (js/Date. (* unix-time 1000))
@@ -75,26 +36,14 @@
 
 (defn chart-component
   [resultForChart monthsInChart]
-  (let [chart (reagent/atom nil)
-        newResults(reagent/atom nil)
-        newMonths(reagent/atom nil)]
-    (js/console.log "chart-component")
+  (let [chart (reagent/atom nil)]
     (reagent/create-class
       {
-       :component-will-mount #(js/console.log "willmount")
-       :component-will-update #(
-                                 (reset! newResults resultForChart)
-                                 (reset! newMonths monthsInChart)
-                                 )
-
-                                 ;;.detach @chart
-                                 ;;(.detach js/Chartist ".ct-chart")
+       ;;:component-will-update #(.detach @chart)
        :component-did-mount #(reset! chart (show-chart resultForChart monthsInChart))
-       :component-did-update #(let [newChartData {:labels (mapv dateFromUnix @newMonths)
-                                                  :series [@newResults]}]
-                                (js/console.log newChartData)
-                                (.update @chart (clj->js chart-data))
-                                ;;(reset! chart (show-chart resultForChart monthsInChart))
+       :component-did-update #(let [newChartData {:labels (mapv dateFromUnix @datesAtom)
+                                                  :series [@resultsAtom]}]
+                                (.update @chart (clj->js newChartData))
                                 )
        :display-name        "chart-component"
        :reagent-render      (fn [resultForChart monthsInChart]
@@ -103,3 +52,59 @@
 (defn renderChart [results months]
   (reagent/render [chart-component results months](.getElementById js/document "myChart"))
   )
+
+
+(defn getFromUrl [url]
+   (go (let [response (<! (http/get url {:with-credentials? false}))]
+     (:total (:body response)))))
+
+(defn sendRequest [kind from to tag]
+  (let [url (string/join ["https://api.stackexchange.com/2.2/"
+                                                 kind "?"
+                                                 "fromdate=" from
+                                                 "&todate=" to
+                                                 "&tagged=" tag
+                                                 "&site=stackoverflow&filter=!bRyCgbjcxkJlK8"
+                                                 "&key=sFL00JQUoK8d5n9GtHiGzg(("
+                          ])]
+    (getFromUrl url)))
+
+(defn makeManyCalls [kind dates tag]
+  (let [tmpFirst (first dates)]
+    (go
+      (loop [firstElem tmpFirst nextDates (rest dates) allResults (vector)]
+        (let [secondElem (first nextDates)
+              newRest (rest nextDates)
+              result (<! (sendRequest kind firstElem secondElem tag))]
+          (let [listOfResults (conj allResults result)]
+          (if (empty? newRest)
+            ( (reset! resultsAtom listOfResults)
+              (reset! datesAtom dates)
+              (renderChart listOfResults dates))
+            (recur secondElem newRest listOfResults)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+;; (defn callback[results]
+;;    (js/console.log (string/join ["Results" results]))
+
+;;   )
+
+
+
+
+;;----------
+;;chart
+
+
+
+
+
+
+
+
