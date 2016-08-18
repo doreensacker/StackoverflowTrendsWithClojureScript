@@ -75,21 +75,27 @@
 
 (defn chart-component
   [resultForChart monthsInChart]
-  (let [chart (reagent/atom nil) ]
+  (let [chart (reagent/atom nil)
+        newResults(reagent/atom nil)
+        newMonths(reagent/atom nil)]
     (js/console.log "chart-component")
     (reagent/create-class
       {
        :component-will-mount #(js/console.log "willmount")
-       :component-will-update #(let [newChartData {:labels (mapv dateFromUnix monthsInChart)
-                                                  :series [resultForChart]}]
-                                (js/console.log newChartData)
-                                (.update @chart (clj->js chart-data))
-                                ;;(show-chart resultForChart monthsInChart)
-                                )
+       :component-will-update #(
+                                 (reset! newResults resultForChart)
+                                 (reset! newMonths monthsInChart)
+                                 )
+
                                  ;;.detach @chart
                                  ;;(.detach js/Chartist ".ct-chart")
        :component-did-mount #(reset! chart (show-chart resultForChart monthsInChart))
-       :component-did-update #()
+       :component-did-update #(let [newChartData {:labels (mapv dateFromUnix @newMonths)
+                                                  :series [@newResults]}]
+                                (js/console.log newChartData)
+                                (.update @chart (clj->js chart-data))
+                                ;;(reset! chart (show-chart resultForChart monthsInChart))
+                                )
        :display-name        "chart-component"
        :reagent-render      (fn [resultForChart monthsInChart]
                               [:div {:class "ct-chart ct-perfect-fourth"}])})))

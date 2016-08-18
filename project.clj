@@ -1,42 +1,54 @@
-(defproject coursework "1.0.0-SNAPSHOT"
+(defproject coursework1 "1.0.0-SNAPSHOT"
   :description "visualisation of stackoverflow"
-  :plugins [[lein-cljsbuild "1.1.3"]
-            ;;[lein-figwheel "0.5.2"]
-            ]
-  :dependencies [
-                 ;;[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.8.51"]
+  :min-lein-version "2.6.1"
+
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojurescript "1.9.89"]
                  [cljs-http "0.1.40"]
-                 ;;[cljsjs/bootstrap "3.3.6-0"]
                  [cljs-pikaday "0.1.2"]
-                 ;;[cljsjs/pikaday "1.4.0-1"]
-                 ;;[cljsjs/react "15.0.1-1"]
+                 [org.clojure/core.async "0.2.385"
+                  :exclusions [org.clojure/tools.reader]]
                  [reagent "0.6.0-alpha"]
-                 [cljsjs/chartist "0.9.4-4"]
-                 ;;[figwheel "0.5.2"]
-                ]
+                 [cljsjs/chartist "0.9.4-4"]]
+  :plugins [[lein-figwheel "0.5.4-7"]
+            [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
 
-  :main 'coursework1.core
-  :output-to "out/main.js"
+  :source-paths ["src"]
+
+  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
+
+  :cljsbuild {:builds
+              [{:id "dev"
+                :source-paths ["src"]
+                :figwheel {:on-jsload "coursework1.core/on-js-reload"
+                           :open-urls ["http://localhost:3449/index.html"]}
+
+                :compiler {:main coursework1.core
+                           :asset-path "js/compiled/out"
+                           :output-to "resources/public/js/compiled/coursework1.js"
+                           :output-dir "resources/public/js/compiled/out"
+                           :source-map-timestamp true
+                           :preloads [devtools.preload]}}
+               ;; Production build with: lein cljsbuild once min
+               {:id "min"
+                :source-paths ["src"]
+                :compiler {:output-to "resources/public/js/compiled/coursework1.js"
+                           :main coursework1.core
+                           :optimizations :advanced
+                           :pretty-print false}}]}
+
+  :figwheel {;; :http-server-root "public" ;; default and assumes "resources"
+             ;; :server-port 3449 ;; default
+             ;; :server-ip "127.0.0.1"
+
+             :css-dirs ["resources/public/css"]
+             }
+
+  :profiles {:dev {:dependencies [[binaryage/devtools "0.7.2"]
+                                  [figwheel-sidecar "0.5.4-7"]
+                                  [com.cemerick/piggieback "0.2.1"]]
+                   :source-paths ["src"]
+                   :repl-options {
+                                  :init (set! *print-length* 50)
+                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
   )
-
-;;   :hooks [leiningen.cljsbuild]
-
-;;   :profiles {:dev {:cljsbuild
-;;                    {:builds {:client
-;;                              {:figwheel {:on-jsload "coursework1.core/run"}
-;;                               :compiler {:main "coursework1.core"
-;;                                          :optimizations :none}}}}}
-
-;;              :prod {:cljsbuild
-;;                     {:builds {:client
-;;                               {:compiler {:optimizations :advanced
-;;                                           :elide-asserts true
-;;                                           :pretty-print false}}}}}}
-
-;;   :figwheel {:repl false}
-
-;;   :cljsbuild {:builds {:client
-;;                        {:source-paths ["src"]
-;;                         :compiler {:output-dir "out"
-;;                                    :output-to "out/main.js"}}}}

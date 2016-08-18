@@ -13,8 +13,12 @@
   (:require-macros [cljs.core.async.macros :refer [go]]
                    [reagent.ratom :refer [reaction]]))
 
-(defonce conn
-  (repl/connect "http://localhost:9000/repl"))
+;; (defonce conn
+;;   (repl/connect "http://localhost:9000/repl"))
+
+
+;;(defonce app-state (atom {:text "Hello world!"}))
+
 
 ;;-----------------------
 ;;var

@@ -1,0 +1,8 @@
+# Mac
+.DS_Store
+
+# Clojurescript
+target
+**/out
+.repl*
+*.log
