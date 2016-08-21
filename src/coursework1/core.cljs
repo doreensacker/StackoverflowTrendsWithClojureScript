@@ -1,4 +1,4 @@
-(ns coursework1.core
+(ns ^:figwheel-always coursework1.core
   (:require [clojure.browser.repl :as repl]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]
@@ -18,10 +18,20 @@
 
 
 ;;(defonce app-state (atom {:text "Hello world!"}))
-
+(enable-console-print!)
 
 ;;-----------------------
 ;;var
+
+(enable-console-print!)
+
+
+(defn do-something-x-y
+  [x y]
+  (+ x y))
+
+
+
 (def today (js/Date.))
 (defonce start (reagent/atom today))
 (defonce end (reagent/atom today))
@@ -80,16 +90,9 @@
   ]
 )
 
-
-;;-----------------------
-;;Charts
-
-
-
 ;;-----------------------
 ;;run
 
 (defn run []
   (reagent/render [home-page](.getElementById js/document "app"))
-
 )

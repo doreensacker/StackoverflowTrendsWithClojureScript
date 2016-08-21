@@ -90,18 +90,6 @@
   )
 )
 
-;; (defn callback[results]
-;;    (js/console.log (string/join ["Results" results]))
-
-;;   )
-
-
-
-
-;;----------
-;;chart
-
-
 
 
 

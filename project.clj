@@ -9,15 +9,20 @@
                  [org.clojure/core.async "0.2.385"
                   :exclusions [org.clojure/tools.reader]]
                  [reagent "0.5.1"]
-                 [cljsjs/chartist "0.9.4-4"]]
+                 [cljsjs/chartist "0.9.4-4"]
+                 [figwheel "0.2.7-SNAPSHOT"]
+                ]
   :plugins [[lein-figwheel "0.5.4-7"]
-            [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
+            [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]
+            [figwheel "0.2.7-SNAPSHOT"]
+           ]
 
   :source-paths ["src"]
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
 
-  :cljsbuild {:builds
+  :cljsbuild {
+        :builds
               [{:id "dev"
                 :source-paths ["src"]
                 :figwheel {:on-jsload "coursework1.core/on-js-reload"
@@ -29,13 +34,25 @@
                            :output-dir "resources/public/js/compiled/out"
                            :source-map-timestamp true
                            :preloads [devtools.preload]}}
-               ;; Production build with: lein cljsbuild once min
-               {:id "min"
-                :source-paths ["src"]
-                :compiler {:output-to "resources/public/js/compiled/coursework1.js"
-                           :main coursework1.core
-                           :optimizations :advanced
-                           :pretty-print false}}]}
+;;                ;; Production build with: lein cljsbuild once min
+;;                {:id "min"
+;;                 :source-paths ["src"]
+;;                 :compiler {:output-to "resources/public/js/compiled/coursework1.js"
+;;                            :main coursework1.core
+;;                            :optimizations :advanced
+;;                            :pretty-print false}}
+              {:id "test"
+              :source-paths ["src" "test"]
+              :compiler {:output-to "resources/public/js/test/test.js"
+                         :output-dir "resources/public/js/test/out"
+                         :optimizations :none
+                         :main coursework1.core-test
+                         :asset-path "js/compiled/test/out"
+                         :source-map true
+                         ;; :source-map-timestamp true
+                         :cache-analysis true }}
+
+              ]}
 
   :figwheel {;; :http-server-root "public" ;; default and assumes "resources"
              ;; :server-port 3449 ;; default
