@@ -72,6 +72,7 @@
 (defn getResultsFromStackoverflow [kind dates tag]
   (let [tmpFirst (first dates)]
     (go
+      ;;Define and initialize 3 parameters to loop with.
       (loop [firstElem tmpFirst nextDates (rest dates) allResults (vector)]
         (let [secondElem (first nextDates)
               newRest (rest nextDates)

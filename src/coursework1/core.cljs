@@ -94,10 +94,8 @@
     ]
     [:div
      [:p [:button {:on-click #(drawChart @questions)} "Get Questions!"]
-         [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues @answers @start @end @tag))} "Get Answers!"]
-         [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues @posts @start @end @tag))} "Get Posts!"]
+         [:button {:on-click #(drawChart @answers)} "Get Answers!"]
+         [:button {:on-click #(drawChart @posts)} "Get Posts!"]
       ]
     ]
 
