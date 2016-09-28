@@ -7,6 +7,7 @@
             [clojure.string :as string]
             [coursework1.network :as network]
             [coursework1.date :as date]
+            [coursework1.chart :as charting]
             [cljsjs.chartist]
 
   )
@@ -44,6 +45,26 @@
 (def months (reagent/atom 0))
 (def totalDaysSelected (reaction (date/daysBetweenDates @start @end)))
 
+(def inputFieldsNotEmpty
+  (or
+       (not= @tag "" )
+       (not= @start "undselected")
+       (not= @end "undselected")) )
+
+(defn drawChart [kindOfPost]
+  (if inputFieldsNotEmpty
+    (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))
+          ;;resultsFromStack (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag)
+          ]
+     ;; (js/console.log resultsFromStack)
+      (js/console.log monthsInTimeSpan)
+      (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag))
+     ;;(reset! resultsAtom listOfResults)
+       ;;       (reset! datesAtom dates)
+    ;;(charting/renderChart resultsFromStack monthsInTimeSpan))
+    )
+)
+
 
 (defn inputField [value]
   [:input {:type "text"
@@ -78,12 +99,22 @@
        [:p "Enter TAG : " [inputField tag]]
     ]
     [:div
-     [:p [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues @questions @start @end @tag))} "Get Questions!"]
-         [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues @answers @start @end @tag))} "Get Answers!"]
-         [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues @posts @start @end @tag))} "Get Posts!"]
+     [:p [:button {:on-click #(drawChart @questions)
+                   } "Get Questions!"]
+;;          [:button {:on-click #(if
+;;                                 (or
+;;                                   (not= tag "" )
+;;                                   (not= start "undselected")
+;;                                   (not= end "undselected"))
+;;                                 (date/getTotalMonthValues @answers @start @end @tag))
+;;                    } "Get Answers!"]
+;;          [:button {:on-click #(if
+;;                                 (or
+;;                                   (not= tag "" )
+;;                                   (not= start "undselected")
+;;                                   (not= end "undselected"))
+;;                                 (date/getTotalMonthValues @posts @start @end @tag))
+;;                    } "Get Posts!"]
       ]
     ]
 

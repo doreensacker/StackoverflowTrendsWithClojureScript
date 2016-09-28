@@ -13,9 +13,17 @@
 (deftest test-do-something-x-y
   (is (= (do-something-x-y 1 2) 3)))
 
+
+  (deftest test-async
+    (async done
+      (http/get "http://foo.com/api.edn"
+        (fn [res]
+          (is (= res :awesome))
+          (done)))))
+
 (defn run-tests []
   (.clear js/console)
-  (cljs.test/run-all-tests #"hello-world.*-test"))
+  (cljs.test/run-all-tests #"coursework1.*-test"))
 (run-tests)
 
 ;; FW connection is optional in order to simply run tests,
