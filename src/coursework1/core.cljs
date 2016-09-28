@@ -52,12 +52,13 @@
 
 (defn drawChart [kindOfPost]
   (if inputFieldsNotEmpty
+    (go
         (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))
-              ]
-            (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag)
+              listOfResultsFromStack (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag)]
           )
     )
   )
+)
 
 
 (defn inputField [value]
