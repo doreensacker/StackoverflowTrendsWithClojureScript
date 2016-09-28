@@ -41,13 +41,6 @@
   )
 )
 
-(defn getTotalMonthValues [kind start end tag]
-  (let [startwert (dateInUnix start)
-        endwert (dateInUnix end)
-        months (monthsBetweenDates nil startwert endwert)]
-        (network/getResultsFromStackoverflow kind months tag)
-  )
-)
 
 (defn daysBetweenDates [x y]
   (when (every? date? [x y])
