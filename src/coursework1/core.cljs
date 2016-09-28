@@ -40,9 +40,24 @@
 (defonce answers (reagent/atom "answers"))
 (defonce questions (reagent/atom "questions"))
 
-
 (def months (reagent/atom 0))
 (def totalDaysSelected (reaction (date/daysBetweenDates @start @end)))
+
+(def inputFieldsNotEmpty
+  (or
+       (not= @tag "" )
+       (not= @start "undselected")
+       (not= @end "undselected")) )
+
+
+(defn drawChart [kindOfPost]
+  (if inputFieldsNotEmpty
+        (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))
+              ]
+            (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag)
+          )
+    )
+  )
 
 
 (defn inputField [value]
@@ -78,8 +93,7 @@
        [:p "Enter TAG : " [inputField tag]]
     ]
     [:div
-     [:p [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
-                                (date/getTotalMonthValues @questions @start @end @tag))} "Get Questions!"]
+     [:p [:button {:on-click #(drawChart @questions)} "Get Questions!"]
          [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))
                                 (date/getTotalMonthValues @answers @start @end @tag))} "Get Answers!"]
          [:button {:on-click #(if (or (not= tag "" ) (not= start "undselected") (not= end "undselected"))

@@ -29,13 +29,13 @@
         "unselected"))
 
 
-(defn monthsBetweenDates [dates firstDate ende]
+(defn monthsBetweenDates [dates firstDate endDate]
   (if (nil? dates)
-     (monthsBetweenDates (vector firstDate) firstDate ende)
+     (monthsBetweenDates (vector firstDate) firstDate endDate)
      (let [nextDate (+ (peek dates) 2592000)]
-       (if (>= nextDate ende)
-             (conj dates ende)
-             (monthsBetweenDates (conj dates nextDate) firstDate ende)
+       (if (>= nextDate endDate)
+             (conj dates (int endDate))
+             (monthsBetweenDates (conj dates nextDate) firstDate endDate)
        )
      )
   )
@@ -45,7 +45,7 @@
   (let [startwert (dateInUnix start)
         endwert (dateInUnix end)
         months (monthsBetweenDates nil startwert endwert)]
-        (network/makeManyCalls kind months tag)
+        (network/getResultsFromStackoverflow kind months tag)
   )
 )
 

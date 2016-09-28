@@ -69,7 +69,7 @@
                           ])]
     (getFromUrl url)))
 
-(defn makeManyCalls [kind dates tag]
+(defn getResultsFromStackoverflow [kind dates tag]
   (let [tmpFirst (first dates)]
     (go
       (loop [firstElem tmpFirst nextDates (rest dates) allResults (vector)]
