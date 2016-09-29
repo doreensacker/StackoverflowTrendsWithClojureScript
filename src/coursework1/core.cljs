@@ -113,9 +113,7 @@
        [:p "Enter TAG : " [inputField tag3]]
     ]
     [:div
-     [:p [:button {:on-click #(drawChart @questions)} "Get Questions!"]
-         [:button {:on-click #(drawChart @answers)} "Get Answers!"]
-         [:button {:on-click #(drawChart @posts)} "Get Posts!"]
+     [:p [:button {:on-click #(drawChart @questions)} "Show Chart!"]
       ]
     ]
 
