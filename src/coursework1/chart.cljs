@@ -40,7 +40,7 @@
        ;;:component-will-update #(.detach @chart)
        :component-did-mount #(reset! chart (show-chart resultForChart monthsInChart))
        :component-did-update #(let [newChartData {:labels (mapv dateFromUnix @datesAtom)
-                                                  :series [@resultsAtom]}]
+                                                  :series @resultsAtom}]
                                 (.update @chart (clj->js newChartData))
                                 )
        :display-name        "chart-component"
@@ -48,14 +48,11 @@
                               [:div {:class "ct-chart ct-perfect-fourth"}])})))
 
 (defn renderChart [results months]
-  (reset! resultsAtom results)
+  (swap! resultsAtom conj results)
   (reset! datesAtom months)
   (reagent/render [chart-component results months](.getElementById js/document "myChart"))
   )
 
-
-
-
-
-
-
+(defn clearChart []
+  (reset! resultsAtom [])
+  (reset! datesAtom []))

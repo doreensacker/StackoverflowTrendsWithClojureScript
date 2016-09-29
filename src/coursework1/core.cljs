@@ -37,7 +37,11 @@
 (def today (js/Date.))
 (defonce start (reagent/atom today))
 (defonce end (reagent/atom today))
-(defonce tag (reagent/atom ""))
+
+(defonce tag1 (reagent/atom ""))
+(defonce tag2 (reagent/atom ""))
+(defonce tag3 (reagent/atom ""))
+
 (defonce posts (reagent/atom "posts"))
 (defonce answers (reagent/atom "answers"))
 (defonce questions (reagent/atom "questions"))
@@ -47,7 +51,6 @@
 
 (def inputFieldsNotEmpty
   (or
-       (not= @tag "" )
        (not= @start "undselected")
        (not= @end "undselected")) )
 
@@ -58,7 +61,16 @@
 (defn drawChart [kindOfPost]
   (if inputFieldsNotEmpty
         (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))]
-          (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag handleResult)
+          (charting/clearChart)
+
+          (if (not= @tag1 "")
+            (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag1 handleResult))
+
+          (if (not= @tag2 "")
+            (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag2 handleResult))
+
+          (if (not= @tag3 "")
+            (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag3 handleResult))
           )
   )
 )
@@ -96,9 +108,9 @@
         }]
     ]
     [:div
-       [:p "Enter TAG : " [inputField tag]]
-       [:p "Enter TAG : " [inputField tag]]
-       [:p "Enter TAG : " [inputField tag]]
+       [:p "Enter TAG : " [inputField tag1]]
+       [:p "Enter TAG : " [inputField tag2]]
+       [:p "Enter TAG : " [inputField tag3]]
     ]
     [:div
      [:p [:button {:on-click #(drawChart @questions)} "Get Questions!"]
