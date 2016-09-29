@@ -10,7 +10,7 @@
 (def resultsAtom (reagent/atom []))
 (def datesAtom (reagent/atom []))
 
-
+;;Converts unixtimestamp to date
 (defn dateFromUnix [unix-time]
   (let [date (js/Date. (* unix-time 1000))
         day (.getDate date)
@@ -21,7 +21,7 @@
     )
   )
 
-
+;;Generates the chart.
 (defn show-chart
   [resultsInChart monthsForResults]
   (let [chart-data {:labels (mapv dateFromUnix monthsForResults)
@@ -32,12 +32,12 @@
    )
   )
 
+;;Build all components to display the chart.
 (defn chart-component
   [resultForChart monthsInChart]
   (let [chart (reagent/atom nil)]
     (reagent/create-class
       {
-       ;;:component-will-update #(.detach @chart)
        :component-did-mount #(reset! chart (show-chart resultForChart monthsInChart))
        :component-did-update #(let [newChartData {:labels (mapv dateFromUnix @datesAtom)
                                                   :series @resultsAtom}]
@@ -47,6 +47,7 @@
        :reagent-render      (fn [resultForChart monthsInChart]
                               [:div {:class "ct-chart ct-perfect-fourth"}])})))
 
+;;Render the chart in dom.
 (defn renderChart [results months]
   (swap! resultsAtom conj results)
   (reset! datesAtom months)

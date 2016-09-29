@@ -4,23 +4,22 @@
    [coursework1.test-formatter :as formatter]
    [figwheel.client :as fw]
    [coursework1.test-helpers :as th]
-   [coursework1.core :refer [do-something-x-y]]
+   [coursework1.date :refer [daysBetweenDates]]
    ))
 
 (enable-console-print!)
 
 
-(deftest test-do-something-x-y
-  (is (= (do-something-x-y 1 2) 3)))
+(deftest test-daysBetweenDates
+  (is (= (daysBetweenDates 1474588800  1474416000) 2)))
+
 
 (defn run-tests []
   (.clear js/console)
-  (cljs.test/run-all-tests #"hello-world.*-test"))
+  (cljs.test/run-all-tests #"coursework1.*-test"))
 (run-tests)
 
-;; FW connection is optional in order to simply run tests,
-;; but is needed to connect to the FW repl and to allow
-;; auto-reloading on file-save
+;; Testresults can be viewed under localhost:3449/test.html in the console
 (fw/start {
            :websocket-url "ws://localhost:3449/figwheel-ws"
            ;; :autoload false

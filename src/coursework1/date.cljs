@@ -13,22 +13,16 @@
 
 
 
-(defn date? [x]
+(defn date? "Check if var is a date"[x]
   (= (type x) js/Date))
 
-;; ;;add 30 days in seconds 2592000
-;; (defn addMonth [d]
-;;   (+ d 2592000)
-;;  )
-
-
-
-(defn dateInUnix [dateInput]
+(defn dateInUnix "Convert var to unixtimestamp" [dateInput]
     (if (date? dateInput)
       (/ (.getTime dateInput) 1000)
         "unselected"))
 
-
+;;Calculates the beginning unixdate for each month between the two given dates.
+;;Returns a list of unixdates, which are the months between the given dates.
 (defn monthsBetweenDates [dates firstDate endDate]
   (if (nil? dates)
      (monthsBetweenDates (vector firstDate) firstDate endDate)
@@ -41,7 +35,7 @@
   )
 )
 
-
+"Returns the number of days between two given dates."
 (defn daysBetweenDates [x y]
   (when (every? date? [x y])
     (let [ms-per-day (* 1000 60 60 25)
