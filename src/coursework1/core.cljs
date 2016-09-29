@@ -7,6 +7,8 @@
             [clojure.string :as string]
             [coursework1.network :as network]
             [coursework1.date :as date]
+            [coursework1.chart :as charting]
+
             [cljsjs.chartist]
 
   )
@@ -49,16 +51,19 @@
        (not= @start "undselected")
        (not= @end "undselected")) )
 
+(defn handleResult [listOfResults dates]
+  (charting/renderChart listOfResults dates)
+  )
 
 (defn drawChart [kindOfPost]
   (if inputFieldsNotEmpty
-    (go
-        (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))
-              listOfResultsFromStack (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag)]
+        (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))]
+          (network/getResultsFromStackoverflow kindOfPost monthsInTimeSpan @tag handleResult)
           )
-    )
   )
 )
+
+
 
 
 (defn inputField [value]
@@ -91,6 +96,8 @@
         }]
     ]
     [:div
+       [:p "Enter TAG : " [inputField tag]]
+       [:p "Enter TAG : " [inputField tag]]
        [:p "Enter TAG : " [inputField tag]]
     ]
     [:div
