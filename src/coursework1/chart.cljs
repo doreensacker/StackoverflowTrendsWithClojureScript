@@ -21,10 +21,17 @@
     )
   )
 
+(defn labels [[x & restDates]]
+    (let [next (first restDates)]
+        (if (empty? restDates)
+            []
+            (concat [(str x " - " next)] (labels restDates))
+        )))
+
 ;;Generates the chart.
 (defn show-chart
   [resultsInChart monthsForResults]
-  (let [chart-data {:labels (mapv dateFromUnix monthsForResults)
+  (let [chart-data {:labels (labels (mapv dateFromUnix monthsForResults))
                     :series [resultsInChart]}
         options {
                  :height "400px"
@@ -42,7 +49,7 @@
     (reagent/create-class
       {
        :component-did-mount #(reset! chart (show-chart resultForChart monthsInChart))
-       :component-did-update #(let [newChartData {:labels (mapv dateFromUnix @datesAtom)
+       :component-did-update #(let [newChartData {:labels (labels (mapv dateFromUnix @datesAtom))
                                                   :series @resultsAtom}]
                                 (.update @chart (clj->js newChartData))
                                 )
