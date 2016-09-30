@@ -23,17 +23,11 @@
 
 ;;Calculates the beginning unixdate for each month between the two given dates.
 ;;Returns a list of unixdates, which are the months between the given dates.
-(defn monthsBetweenDates [dates firstDate endDate]
-  (if (nil? dates)
-     (monthsBetweenDates (vector firstDate) firstDate endDate)
-     (let [nextDate (+ (peek dates) 2592000)]
-       (if (>= nextDate endDate)
-             (conj dates (int endDate))
-             (monthsBetweenDates (conj dates nextDate) firstDate endDate)
-       )
-     )
-  )
-)
+(defn monthsBetweenDates [firstDate endDate]
+    (let [nextDate (+ firstDate 2592000)]
+        (if (<= nextDate endDate)
+            (concat [firstDate] (monthsBetweenDates nextDate endDate))
+            [firstDate])))
 
 "Returns the number of days between two given dates."
 (defn daysBetweenDates [x y]

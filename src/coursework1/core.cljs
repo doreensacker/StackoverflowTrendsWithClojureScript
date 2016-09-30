@@ -41,7 +41,7 @@
 
 (defn drawChart []
   (if inputFieldsNotEmpty
-        (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))
+        (let [monthsInTimeSpan (date/monthsBetweenDates (date/dateInUnix @start) (date/dateInUnix @end))
               tags (notEmptyTags)]
           (charting/clearChart)
           (mapv #(network/getResultsFromStackoverflow monthsInTimeSpan %1 handleResult) tags))))
