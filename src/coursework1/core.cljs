@@ -30,27 +30,23 @@
        (not= @start "undselected")
        (not= @end "undselected")) )
 
-;;Callback function for getResultsFromStackoverflow
-(defn handleResult [listOfResults dates]
-  (charting/renderChart listOfResults dates)
-  )
+(defn notEmptyTags []
+   (filterv #(not (string/blank? %1)) [@tag1 @tag2 @tag3]))
 
-(defn drawChart "Conduct operations for drawing the chart" []
+(defn handleResult [listOfResults dates tag]
+    (let [tags (notEmptyTags)
+          sortedTags (sort compare tags)]
+         (charting/renderChart listOfResults dates tag sortedTags)
+))
+
+(defn drawChart []
   (if inputFieldsNotEmpty
-        (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))]
+        (let [monthsInTimeSpan (date/monthsBetweenDates nil (date/dateInUnix @start) (date/dateInUnix @end))
+              tags (notEmptyTags)]
           (charting/clearChart)
+          (mapv #(network/getResultsFromStackoverflow monthsInTimeSpan %1 handleResult) tags))))
 
-          (if (not= @tag1 "")
-            (network/getResultsFromStackoverflow monthsInTimeSpan @tag1 handleResult))
 
-          (if (not= @tag2 "")
-            (network/getResultsFromStackoverflow monthsInTimeSpan @tag2 handleResult))
-
-          (if (not= @tag3 "")
-            (network/getResultsFromStackoverflow monthsInTimeSpan @tag3 handleResult))
-          )
-  )
-)
 
 (defn inputField [value]
   [:input {:type "text"

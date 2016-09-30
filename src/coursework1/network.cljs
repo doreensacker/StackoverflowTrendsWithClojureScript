@@ -39,7 +39,7 @@
           (let [listOfResults (conj allResults result)]
           ;;When all requests are made, use callbackfunction handleResults.
           (if (empty? newRest)
-            (handleResult listOfResults dates)
+            (handleResult listOfResults dates tag)
             (recur secondElem newRest listOfResults)
             )
           )

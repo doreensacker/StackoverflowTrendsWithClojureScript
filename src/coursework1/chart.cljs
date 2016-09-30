@@ -26,8 +26,11 @@
   [resultsInChart monthsForResults]
   (let [chart-data {:labels (mapv dateFromUnix monthsForResults)
                     :series [resultsInChart]}
-        options {:width  "700px"
-                 :height "380px"}]
+        options {
+                 :height "400px"
+                 :chartPadding 10
+                 :lineSmooth (js/Chartist.Interpolation.simple {:divisor 2})
+                  }]
     (js/Chartist.Line ".ct-chart" (clj->js chart-data) (clj->js options))
    )
   )
@@ -47,12 +50,26 @@
        :reagent-render      (fn [resultForChart monthsInChart]
                               [:div {:class "ct-chart ct-perfect-fourth"}])})))
 
+
+(defn legendForChart
+  [tagList]
+  [:div
+       [:p
+           [:span.legend {:style{:color "#d70206"}} (str (nth tagList 0))]
+           [:span.legend {:style{:color "#0544d3"}} (str (nth tagList 1))]
+           [:span.legend {:style{:color "#55ec33"}} (str (nth tagList 2))] ]
+    ]
+  )
+
 ;;Render the chart in dom.
-(defn renderChart [results months]
-  (swap! resultsAtom conj results)
+(defn renderChart [results months tag sortedTags]
+    (let [new (conj @resultsAtom {:name tag :data results})
+          sorted (sort #(compare (:name %1) (:name %2)) new)]
+  (reset! resultsAtom sorted)
   (reset! datesAtom months)
   (reagent/render [chart-component results months](.getElementById js/document "myChart"))
-  )
+  (reagent/render [legendForChart sortedTags](.getElementById js/document "legend"))
+  ))
 
 (defn clearChart []
   (reset! resultsAtom [])

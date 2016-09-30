@@ -165,16 +165,16 @@
   fill: #d70206; }
 
 .ct-series-b .ct-point, .ct-series-b .ct-line, .ct-series-b .ct-bar, .ct-series-b .ct-slice-donut {
-  stroke: #f05b4f; }
+  stroke: #0544d3; }
 
 .ct-series-b .ct-slice-pie, .ct-series-b .ct-area {
-  fill: #f05b4f; }
+  fill: #0544d3; }
 
 .ct-series-c .ct-point, .ct-series-c .ct-line, .ct-series-c .ct-bar, .ct-series-c .ct-slice-donut {
-  stroke: #f4c63d; }
+  stroke: #55ec33; }
 
 .ct-series-c .ct-slice-pie, .ct-series-c .ct-area {
-  fill: #f4c63d; }
+  fill: #55ec33; }
 
 .ct-series-d .ct-point, .ct-series-d .ct-line, .ct-series-d .ct-bar, .ct-series-d .ct-slice-donut {
   stroke: #d17905; }
@@ -356,14 +356,15 @@
 .ct-perfect-fourth {
   display: block;
   position: relative;
-  width: 100%; }
+  width: 100%;
+  padding-bottom: 0;
+  height: 380px;}
   .ct-perfect-fourth:before {
     display: block;
     float: left;
     content: "";
     width: 0;
-    height: 0;
-    padding-bottom: 75%; }
+    height: 0;}
   .ct-perfect-fourth:after {
     content: "";
     display: table;
@@ -425,8 +426,7 @@
     float: left;
     content: "";
     width: 0;
-    height: 0;
-    padding-bottom: 61.804697157%; }
+    height: 0;}
   .ct-golden-section:after {
     content: "";
     display: table;
